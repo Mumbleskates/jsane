@@ -10,7 +10,7 @@ Three-line intro
 
     >>> import jsane
     >>> j = jsane.loads('{"foo": {"bar": {"baz": ["well", "hello", "there"]}}}')
-    >>> j.foo.bar.baz[1].r()
+    >>> j.foo.bar.baz[1]()
     u'hello'
 
 
@@ -76,7 +76,7 @@ Motivation (non-infomercial version)
 ------------------------------------
 
 Okay seriously, ``this["thing"]["is"]["no"]["fun"]``. JSane lets you
-``traverse.json.like.this.r()``. That's it.
+``traverse.json.like.this()``. That's it.
 
 
 Usage
@@ -94,7 +94,7 @@ Here's an example of its usage::
     >>> import jsane
 
     >>> j = jsane.loads('{"some": {"json": [1, 2, 3]}}')
-    >>> j.some.json[2].r()
+    >>> j.some.json[2]()
     3
 
 You can also load an existing dictionary::
@@ -114,9 +114,9 @@ accesses::
     Traversable
 
 If you want your real object back at the end of the wild attribute ride, call
-``.r()``::
+it::
 
-    >>> j.foo.bar.r()
+    >>> j.foo.bar()
     {"baz": "yes!"}
 
 If an attribute, item or index along the way does not exist, you'll get an
@@ -128,17 +128,43 @@ exception. You can get rid of that by specifying a default::
     >>> j.haha_sucka_this_doesnt_exist.r(default="💩")
     "💩"
 
-"But how do I access a key called ``r``?!", I hear you ask. Worry not, I got you
-covered::
+For convenience, you can access values specifically as numbers::
 
-    >>> j.key["r"].more_key.r()
+    >>> import jsane
 
-Confused? Don't name your keys ``r``, then.
+    >>> j = jsane.loads('{"numbers": {"one": 1}, "letters": {"zee": "Z"}}')
+    >>> +j.numbers.one
+    1
+    >>> +j.letters.zee, +j.numbers  # Things that aren't numbers are nan
+    (nan, nan)
+    >>> +j.numbers
+    nan
+    >>> +j.what  # Things that don't exist are also nan.
+    nan
 
-That's about it. I'm not loving the ``r()`` API, so if anyone has any good
-recommendations on how I may better fulfil my unholy purpose, I'm changing it on
-the spot. No guarantees of stability before version 1, as always. Semver giveth,
-and semver taketh away.
+Likewise for strings, calling str() on a Traversable object is a simple
+shortcut::
+
+    >>> str(j.letters.zee)
+    'Z'
+    >>> str(j.numbers)
+    "{'one': 1}"
+    >>> str(j.numbers.one)
+    '1'
+
+In the same fashion, int() and float() are also shortcuts but unlike str()
+(and consistent with their behavior elsewhere in Python) they do not
+infallibly return objects of their respective type.
+
+"But how do I access a key called ``__call__``, or ``_obj`` where you store the
+wrapped object?!", I hear you ask. Worry not, I got you covered::
+
+    >>> j.key["__call__"].more_key()
+
+Confused? Don't name your keys after Python builtins, then.
+
+That's about it. No guarantees of stability before version 1, as always. Semver
+giveth, and semver taketh away.
 
 Help needed/welcome/etc, mostly with designing the API. Also, if you find this
 library useless, let me know.
@@ -168,6 +194,6 @@ FAQ
 
   Yes.
 
-* I hate the `.r()` thing, is there any way to avoid it?
+* All my JSON data uses '_obj' as keys!
 
-  Did you even **read** this README?
+  Come on, man. :(
