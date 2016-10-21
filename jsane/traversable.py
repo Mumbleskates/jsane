@@ -1,10 +1,6 @@
 from numbers import Number
 
 
-# Use this as a detectable default value.
-DEFAULT = object()
-
-
 class JSaneException(KeyError):
     pass
 
