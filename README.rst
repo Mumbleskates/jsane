@@ -14,7 +14,7 @@ Three-line intro
     >>> import jsane
     >>> j = jsane.loads('{"foo": {"bar": {"baz": ["well", "hello", "there"]}}}')
     >>> j.foo.bar.baz[1]()
-    u'hello'
+    'hello'
 
 
 Motivation
@@ -103,7 +103,7 @@ Here's an example of its usage::
 You can also load an existing object::
     >>> j = jsane.from_object({"hi": "there"})
     >>> j.hi
-    'there'
+    <Traversable: 'there'>
 
 If the object contains any data types that aren't valid in JSON (like
 functions), it still should work, but you're on your own.
@@ -114,13 +114,13 @@ accesses::
 
     >>> j = jsane.loads('{"foo": {"bar": {"baz": "yes!"}}}')
     >>> type(j.foo)
-    Traversable
+    <class 'jsane.traversable.Traversable'>
 
 If you want your real object back at the end of the wild attribute ride, call
 it::
 
     >>> j.foo.bar()
-    {"baz": "yes!"}
+    {'baz': 'yes!'}
 
 If an attribute, item or index along the way does not exist, you'll get an
 exception. You can get rid of that by specifying a default::
@@ -129,13 +129,13 @@ exception. You can get rid of that by specifying a default::
 
     >>> j = jsane.loads('{"some": "json"}')
     >>> j.haha_sucka_this_doesnt_exist.r(default="💩")
-    "💩"
+    '💩'
 
 For convenience, you can access values specifically as numbers::
 
     >>> import jsane
 
-    >>> j = jsane.loads('{"numbers": {"one": [1, "11"]}, "letter": "Z"}')
+    >>> j = jsane.loads('{"numbers": {"one": [1, "11"]}, "letters": "XYZ"}')
     >>> +j.numbers.one[0]
     1
     >>> +j.letter, +j.numbers.one[1]  # Things that aren't numbers are nan
@@ -151,10 +151,10 @@ Testing for NaN is also easy with the standard library math.isnan() function.)
 Likewise for strings, calling str() on a Traversable object is a simple
 shortcut::
 
-    >>> str(j.letters.zee)
-    'Z'
+    >>> str(j.letters)
+    'XYZ'
     >>> str(j.numbers)
-    "{'one': 1}"
+    "{'one': [1, '11']}"
     >>> str(j.numbers.one[0])
     '1'
 
@@ -168,6 +168,9 @@ wrapped object?!", I hear you ask. Worry not, object keys are still accessible
 with indexing::
 
     >>> j.key["__call__"].more_key()
+    Traceback (most recent call last):
+      ...
+    jsane.traversable.JSaneException: 'Key does not exist: key'
 
 That's about it. No guarantees of stability before version 1, as always. Semver
 giveth, and semver taketh away.
