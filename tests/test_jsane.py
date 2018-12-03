@@ -87,9 +87,9 @@ class TestClass:
 
     def test_default(self):
         j = loads(self.json1)
-        assert j.key_1.key_2(None) is None
-        assert j.key_2.nonexistent[0]("default") == "default"
-        assert j.key_2.key_21[7]("default") == "default"
+        assert j.key_1.key_2(default=None) is None
+        assert j.key_2.nonexistent[0](default="default") == "default"
+        assert j.key_2.key_21[7](default="default") == "default"
         with pytest.raises(IndexError):
             j.key_2.key_24.key_244.key_2442[0](default="default")[7]
 
