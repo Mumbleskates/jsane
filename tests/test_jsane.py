@@ -6,7 +6,7 @@ import pep8
 
 sys.path.insert(0, os.path.abspath(__file__ + "/../.."))
 
-from jsane import loads, dumps, JSaneException, from_dict, new
+from jsane import loads, dumps, JSaneException, from_dict, from_object, new
 from jsane.traversable import Traversable
 
 
@@ -75,6 +75,10 @@ class TestClass:
         with pytest.raises(JSaneException):
             j.key_2.key_21[7]()
         with pytest.raises(JSaneException):
+            j.key_2.nonexistent[0]()
+        with pytest.raises(JSaneException):
+            j.key_2.key_21[7]()
+        with pytest.raises(JSaneException):
             j.key_1.key_2()
         with pytest.raises(IndexError):
             j.key_2.key_24.key_244.key_2442[0]()[7]
@@ -83,9 +87,9 @@ class TestClass:
 
     def test_default(self):
         j = loads(self.json1)
-        assert j.key_1.key_2(default=None) is None
-        assert j.key_2.nonexistent[0](default="default") == "default"
-        assert j.key_2.key_21[7](default="default") == "default"
+        assert j.key_1.key_2(None) is None
+        assert j.key_2.nonexistent[0]("default") == "default"
+        assert j.key_2.key_21[7]("default") == "default"
         with pytest.raises(IndexError):
             j.key_2.key_24.key_244.key_2442[0](default="default")[7]
 
@@ -183,3 +187,11 @@ class TestClass:
                                     parse_argv=False)
         report = pep8style.check_files()
         assert report.total_errors == 0
+
+    def test_obj(self):
+        obj = [1, 2, 3, {"foo": "bar"}]
+        j = from_object(obj)
+        assert j[0]() == 1
+        for x, y in zip(j, obj):
+            assert x() == y
+        assert j[3].foo() == "bar"

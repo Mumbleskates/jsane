@@ -26,7 +26,17 @@ def dumps(obj, *args, **kwargs):
 
 
 def from_dict(jdict):
+    """
+    Return a JSane Traversable object from a dict.
+    """
     return Traversable(jdict)
+
+
+def from_object(obj):
+    """
+    Return a JSane Traversable object from any object (e.g. a list).
+    """
+    return Traversable(obj)
 
 
 def new(kind=dict):

@@ -1,6 +1,9 @@
 JSane
 =====
 
+.. image:: https://travis-ci.org/skorokithakis/jsane.svg?branch=master
+    :target: https://travis-ci.org/skorokithakis/jsane
+
 JSane is a JSON "parser" that makes attribute accesses easier.
 
 Three-line intro
@@ -30,7 +33,7 @@ a badly-written README. You launch the shell and type two words::
 
     import jsane
 
-The day is saved.
+`The day is saved`_.
 
 
 Motivation (non-Hollywood version)
@@ -97,15 +100,15 @@ Here's an example of its usage::
     >>> j.some.json[2]()
     3
 
-You can also load an existing dictionary::
-    >>> j = jsane.from_dict({"hi": "there"})
+You can also load an existing object::
+    >>> j = jsane.from_object({"hi": "there"})
     >>> j.hi
     'there'
 
-If the dictionary contains any data types that aren't valid in JSON (like
+If the object contains any data types that aren't valid in JSON (like
 functions), it still should work, but you're on your own.
 
-Due to Python being a non-insane language, there's a limit to the amount of
+Due to Python being a sensible language, there's a limit to the amount of
 crap you can pull with it, so JSane actually returns a ``Traversable`` object on
 accesses::
 
@@ -157,11 +160,10 @@ In the same fashion, int() and float() are also shortcuts but unlike str()
 infallibly return objects of their respective type.
 
 "But how do I access a key called ``__call__``, or ``_obj`` where you store the
-wrapped object?!", I hear you ask. Worry not, I got you covered::
+wrapped object?!", I hear you ask. Worry not, object keys are still accessible
+with indexing::
 
     >>> j.key["__call__"].more_key()
-
-Confused? Don't name your keys after Python builtins, then.
 
 That's about it. No guarantees of stability before version 1, as always. Semver
 giveth, and semver taketh away.
@@ -197,3 +199,5 @@ FAQ
 * All my JSON data uses '_obj' as keys!
 
   Come on, man. :(
+
+.. _The day is saved: https://www.youtube.com/watch?v=mWqGJ613M5Y
