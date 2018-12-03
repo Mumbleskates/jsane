@@ -135,15 +135,18 @@ For convenience, you can access values specifically as numbers::
 
     >>> import jsane
 
-    >>> j = jsane.loads('{"numbers": {"one": 1}, "letters": {"zee": "Z"}}')
-    >>> +j.numbers.one
+    >>> j = jsane.loads('{"numbers": {"one": [1, "11"]}, "letter": "Z"}')
+    >>> +j.numbers.one[0]
     1
-    >>> +j.letters.zee, +j.numbers  # Things that aren't numbers are nan
+    >>> +j.letter, +j.numbers.one[1]  # Things that aren't numbers are nan
     (nan, nan)
     >>> +j.numbers
     nan
     >>> +j.what  # Things that don't exist are also nan.
     nan
+
+(NaN is not representable in JSON, so this should be enough for most use cases.
+Testing for NaN is also easy with the standard library math.isnan() function.)
 
 Likewise for strings, calling str() on a Traversable object is a simple
 shortcut::
@@ -152,12 +155,13 @@ shortcut::
     'Z'
     >>> str(j.numbers)
     "{'one': 1}"
-    >>> str(j.numbers.one)
+    >>> str(j.numbers.one[0])
     '1'
 
 In the same fashion, int() and float() are also shortcuts but unlike str()
 (and consistent with their behavior elsewhere in Python) they do not
-infallibly return objects of their respective type.
+infallibly return objects of their respective type (that is, they may raise a
+ValueError instead).
 
 "But how do I access a key called ``__call__``, or ``_obj`` where you store the
 wrapped object?!", I hear you ask. Worry not, object keys are still accessible
